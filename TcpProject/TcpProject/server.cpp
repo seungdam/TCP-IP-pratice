@@ -199,8 +199,15 @@ int main(int argc, char* argv[])
     // 소켓 생성 실패시 에러 출력
     if (udp_socket == INVALID_SOCKET) err_quit("socket()");
     MessageBox(NULL, "udp 소켓 생성 성공", "알림", MB_OK);
-
     closesocket(udp_socket);
+
+    // 연습문제 3
+    SOCKET tcp_socket = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+    if (tcp_socket == INVALID_SOCKET) err_quit("socket()");
+    MessageBox(NULL, "tcp 소켓 생성 성공", "알림", MB_OK);
+    closesocket(tcp_socket);
+
+
     // 윈속 종료
     WSACleanup();
     return 0;
