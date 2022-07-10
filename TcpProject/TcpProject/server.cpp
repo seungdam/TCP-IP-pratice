@@ -179,6 +179,8 @@ DWORD WINAPI TCPServer6(LPVOID arg)
 
 int main(int argc, char* argv[])
 {
+
+    // p.61 연습문제 1
     // 윈속 초기화
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(3, 2), &wsa) != 0)
@@ -189,6 +191,16 @@ int main(int argc, char* argv[])
     cout << wsa.szDescription << endl;
     cout << wsa.szSystemStatus << endl;
     MessageBox(NULL, "윈속 초기화 성공", "알림", MB_OK);
+    
+    // 연습문제 2
+    // udp 소켓 생성 IPv6 주소체계 , 비연결성(udp) udp 프로토콜;
+    SOCKET udp_socket = socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
+    
+    // 소켓 생성 실패시 에러 출력
+    if (udp_socket == INVALID_SOCKET) err_quit("socket()");
+    MessageBox(NULL, "udp 소켓 생성 성공", "알림", MB_OK);
+
+    closesocket(udp_socket);
     // 윈속 종료
     WSACleanup();
     return 0;
