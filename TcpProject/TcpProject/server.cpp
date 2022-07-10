@@ -221,13 +221,18 @@ int main(int argc, char* argv[])
     closesocket(tcp_socket);
 
     // 연습문제 4
-    SOCKET tmp_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_TCP); // 에러 발생 소켓
-    int retval = f(tmp_socket);
+    //SOCKET tmp_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_TCP); // 에러 발생 소켓
+    //int retval = f(tmp_socket);
 
-    if (retval == SOCKET_ERROR)
-        err_quit("socket()");
-    closesocket(tmp_socket);
+    //if (retval == SOCKET_ERROR)
+    //    err_quit("socket()");
+    //closesocket(tmp_socket);
     // 윈속 종료
+
+    // 연습문제 5
+    SOCKET wsa_tcp_socket = WSASocket(AF_INET6, SOCK_STREAM, IPPROTO_TCP, NULL,0, WSA_FLAG_OVERLAPPED);
+    if (wsa_tcp_socket == INVALID_SOCKET) err_quit("socket()");
+    closesocket(wsa_tcp_socket);
     WSACleanup();
     return 0;
 }
