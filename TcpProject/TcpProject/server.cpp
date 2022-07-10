@@ -2,12 +2,13 @@
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <iostream>
 
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
+using std::cout;
+using std::endl;
 // 소켓 함수 오류 출력 후 종료
 void err_quit(char* msg)
 {
@@ -31,7 +32,7 @@ void err_display(char* msg)
         NULL, WSAGetLastError(),
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
         (LPTSTR)&lpMsgBuf, 0, NULL);
-    printf("[%s] %s", msg, (char*)lpMsgBuf);
+    cout << "[" << msg << "]" <<  (char*)lpMsgBuf;
     LocalFree(lpMsgBuf);
 }
 
@@ -73,8 +74,9 @@ DWORD WINAPI TCPServer4(LPVOID arg)
         }
 
         // 접속한 클라이언트 정보 출력
-        printf("\n[TCP 서버] 클라이언트 접속: IP 주소=%s, 포트 번호=%d\n",
-            inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
+        cout << endl;
+        cout << "\n[TCP 서버] 클라이언트 접속 : IP 주소 = " << inet_ntoa(clientaddr.sin_addr)
+            << " 포트 번호 = " << ntohs(clientaddr.sin_port);
 
         // 클라이언트와 데이터 통신
         while (1) {
@@ -89,13 +91,13 @@ DWORD WINAPI TCPServer4(LPVOID arg)
 
             // 받은 데이터 출력
             buf[retval] = '\0';
-            printf("%s", buf);
+            cout << buf;
         }
 
         // closesocket()
         closesocket(client_sock);
-        printf("[TCP 서버] 클라이언트 종료: IP 주소=%s, 포트 번호=%d\n",
-            inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
+        cout << "[TCP 서버] 클라이언트 종료: IP 주소 = " << inet_ntoa(clientaddr.sin_addr) 
+            << " 포트 번호 = " << ntohs(clientaddr.sin_port);
     }
 
     // closesocket()
@@ -166,7 +168,7 @@ DWORD WINAPI TCPServer6(LPVOID arg)
 
         // closesocket()
         closesocket(client_sock);
-        printf("[TCP 서버] 클라이언트 종료: %s\n", ipaddr);
+        cout << "[TCP 서버] 클라이언트 종료: " << ipaddr << endl;
     }
 
     // closesocket()
@@ -182,8 +184,11 @@ int main(int argc, char* argv[])
     if (WSAStartup(MAKEWORD(3, 2), &wsa) != 0)
         return 1;
 
+    cout << wsa.wVersion << endl; 
+    cout << wsa.wHighVersion << endl;
+    cout << wsa.szDescription << endl;
+    cout << wsa.szSystemStatus << endl;
     MessageBox(NULL, "윈속 초기화 성공", "알림", MB_OK);
-
     // 윈속 종료
     WSACleanup();
     return 0;
