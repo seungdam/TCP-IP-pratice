@@ -177,6 +177,19 @@ DWORD WINAPI TCPServer6(LPVOID arg)
     return 0;
 }
 
+// 사용자 정의 에러 함수 
+int f(int x) {
+    if (x >= 0) { 
+        WSASetLastError(0);
+        return 0; 
+    }
+    else {
+        int errorcode = WSAEMSGSIZE;
+        WSASetLastError(errorcode);
+        return SOCKET_ERROR;
+    }
+}
+
 int main(int argc, char* argv[])
 {
 
@@ -207,7 +220,13 @@ int main(int argc, char* argv[])
     MessageBox(NULL, "tcp 소켓 생성 성공", "알림", MB_OK);
     closesocket(tcp_socket);
 
+    // 연습문제 4
+    SOCKET tmp_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_TCP); // 에러 발생 소켓
+    int retval = f(tmp_socket);
 
+    if (retval == SOCKET_ERROR)
+        err_quit("socket()");
+    closesocket(tmp_socket);
     // 윈속 종료
     WSACleanup();
     return 0;
