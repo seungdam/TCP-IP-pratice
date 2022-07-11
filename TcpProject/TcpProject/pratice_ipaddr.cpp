@@ -11,5 +11,12 @@ int main() {
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(3, 2), &wsa) != 0)
 		return 1;
+	
+	char* ipv4 = "127.46.114.70";
+
+	
+	cout << "[문자열 주소]" << ipv4 << endl;
+	cout << "[네트워크 바이트 정렬]" << inet_addr(ipv4) << endl;
+
 	WSACleanup();
 }
