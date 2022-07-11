@@ -204,5 +204,7 @@ int main(int argc, char* argv[])
     cout << "0x" << x2 << std::hex << " 0x" << ntohs(x2) << std::hex << endl; // 16비트 16진수 출력
     cout << "0x" << y2 << std::hex << " 0x" << ntohl(y2) << std::hex << endl; // 32비트 16진수 출력
 
+
+   
     WSACleanup();
 }
