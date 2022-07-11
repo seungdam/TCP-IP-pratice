@@ -191,7 +191,18 @@ int main(int argc, char* argv[])
 
 
     // 호스트 바이트 -> 네트워크 바이트 hton
+    cout << "[호스트 바이트] --> [네트워크 바이트]" << endl;
     cout << "0x" << x1 << std::hex << " 0x" << htons(x1) << std::hex << endl; // 16비트 16진수 출력
     cout << "0x" << y1 << std::hex << " 0x" << htonl(y1) << std::hex << endl; // 32비트 16진수 출력
+
+    // 네트워크 바이트 선언
+    u_short x2 = htons(x1);
+    u_long  y2 = htonl(y1);
+
+    cout << endl;
+    cout << "[네트워크 바이트] --> [호스트 바이트]" << endl;
+    cout << "0x" << x2 << std::hex << " 0x" << ntohs(x2) << std::hex << endl; // 16비트 16진수 출력
+    cout << "0x" << y2 << std::hex << " 0x" << ntohl(y2) << std::hex << endl; // 32비트 16진수 출력
+
     WSACleanup();
 }
