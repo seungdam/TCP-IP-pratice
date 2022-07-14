@@ -22,8 +22,21 @@ int main() {
 	// 바이트 정렬된 주소
 	IN_ADDR ipv4num; // ipv4 주소 저장을 위한 구조체
 	ipv4num.s_addr = inet_addr(ipv4);
-
 	cout << "[바이트 정렬] -> [문자열]" << inet_ntoa(ipv4num) << endl;
+
+	// WSAStringToAddress 함수 연습 문자열 -> 숫자
+	// WSAStringToAddress (문자열 형식 ip 주소, AddressFamily(AF_INET/6),IpProtocolInfo(NULL), IpAddress(ip주소를 저장할 구조체), 버퍼의 길이)
+	cout << endl;
+	char* ipv6 = "2001:0230:abcd:ffab:0023:eb00:ffff:1111";
+	cout << ipv6 << endl;
+	SOCKADDR_IN6 ipv6num;
+	int addrlen = sizeof(ipv6num); 
+	WSAStringToAddress(ipv6, AF_INET6, NULL,(SOCKADDR*)&ipv6num, &addrlen);
+	for (auto i : ipv6num.sin6_addr.u.Byte) {
+		cout.width(2);
+		cout.fill('0');
+		cout << std::hex << (int)i;
+	}
 
 	WSACleanup();
 }
