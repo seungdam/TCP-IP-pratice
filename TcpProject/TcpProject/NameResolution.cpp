@@ -58,7 +58,12 @@ int main() {
 
 	IN_ADDR addr;
 	if (getIpAddr(testDomainName, &addr)) {
-		cout << "[도메인] -> [주소] : " << inet_ntoa(addr);
+		cout << "[도메인] -> [주소] : " << inet_ntoa(addr) << endl;
+		char tmpName[256];
+		if (getDomainName(addr, tmpName, sizeof(tmpName))) {
+			cout << "[주소]->[도메인] : " << tmpName << endl;
+		}
 	}
+
 	WSACleanup();
 }
