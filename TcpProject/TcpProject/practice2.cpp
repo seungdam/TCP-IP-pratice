@@ -13,10 +13,6 @@ using std::endl;
 bool isLittleEndian() {
 	int tmp = 0x12345678;
 	char* ptr = (char*)&tmp;
-	cout <<  std::hex << (int)ptr[0] << endl;
-	cout <<  std:: hex << (int)ptr[1] << endl;
-	cout <<  std:: hex << (int)ptr[2] << endl;
-	cout <<  std::hex << (int)ptr[3] << endl;
 	if (*(char*)&tmp == 0x78) {
 		cout << "¸®Æ²" << endl;
 		return true;
@@ -28,10 +24,6 @@ bool isLittleEndian() {
 bool isBigEndian() {
 	int tmp = 0x12345678;
 	char* ptr = (char*)&tmp;
-	cout << std::hex << (int)ptr[0] << endl;
-	cout << std::hex << (int)ptr[1] << endl;
-	cout << std::hex << (int)ptr[2] << endl;
-	cout << std::hex << (int)ptr[3] << endl;
 	if (*(char*)&tmp == 0x12) {
 		cout << "ºò" << endl;
 		return true;
