@@ -50,8 +50,15 @@ bool getDomainName(IN_ADDR addr, char* name, int namelen) {
 
 int main() {
 	WSADATA wsa;
+	char testDomainName[50] = "www.example.com";
 	if (WSAStartup(MAKEWORD(3,2), &wsa) != 0)
 		return 0;
+	cout << "도메인 : " << testDomainName << endl;
+	// 도메인 이름 -> ipv4주소
 
+	IN_ADDR addr;
+	if (getIpAddr(testDomainName, &addr)) {
+		cout << "[도메인] -> [주소] : " << inet_ntoa(addr);
+	}
 	WSACleanup();
 }
