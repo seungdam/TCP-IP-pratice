@@ -38,5 +38,26 @@ int main() {
 		return 0;
 	isLittleEndian();
 	isBigEndian();
+
+	u_short x1 = 0x1234;// unsigned short
+	u_long  y1 = 0x12345678;// unsigned long
+
+	SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+	u_short x2;
+	u_long y2;
+	cout << "[호스트] --> [네트워크] 바이트 정렬" << endl;
+	WSAHtons(s, x1, &x2);
+	WSAHtonl(s, y1, &y2);
+	cout << "0x" << std::hex << x1 << " -> " << "0x" << x2 << endl;
+	cout << "0x" << std::hex << y1 << " -> " << "0x" << y2 << endl;
+
+	cout << endl;
+	cout << "다시 변환" << endl;
+	WSANtohs(s, x2, &x2);
+	WSANtohl(s, y2, &y2);
+	cout << "0x" << std::hex << x2 << endl;
+	cout << "0x" << std::hex << y2 << endl;
+
 	WSACleanup();
 }
