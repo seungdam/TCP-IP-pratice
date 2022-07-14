@@ -19,6 +19,19 @@ void err_display(char* msg) {
 	LocalFree(lpMsgBuf);
 }
 
+// 도메인 이름 -> ip주소
+
+bool getIpAddr(char* domain_name, IN_ADDR* addr) {
+	HOSTENT* ptr = gethostbyname(domain_name);
+	if (ptr == NULL) {
+		err_display("gethostbyname()");
+		return false;
+	}
+	if (ptr->h_addrtype != AF_INET)
+		return false;
+	memcpy(addr, ptr->h_addr_list, ptr->h_length);
+	return true;
+}
 
 int main() {
 	WSADATA wsa;
