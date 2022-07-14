@@ -3,6 +3,7 @@
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <stdio.h>
 #include <iostream>
 #include <vector>
 
@@ -22,7 +23,21 @@ bool isLittleEndian() {
 	}
 	cout << "¾Æ´Ô" << endl;
 	return false;
+}
 
+bool isBigEndian() {
+	int tmp = 0x12345678;
+	char* ptr = (char*)&tmp;
+	cout << std::hex << (int)ptr[0] << endl;
+	cout << std::hex << (int)ptr[1] << endl;
+	cout << std::hex << (int)ptr[2] << endl;
+	cout << std::hex << (int)ptr[3] << endl;
+	if (*(char*)&tmp == 0x12) {
+		cout << "ºò" << endl;
+		return true;
+	}
+	cout << "¾Æ´Ô" << endl;
+	return false;
 }
 
 int main() {
@@ -30,5 +45,6 @@ int main() {
 	if (WSAStartup(MAKEWORD(3, 2), &wsa) != 0)
 		return 0;
 	isLittleEndian();
+	isBigEndian();
 	WSACleanup();
 }
