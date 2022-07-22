@@ -1,4 +1,5 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS // 최신 VC++ 컴파일 시 경고 방지
+#define _CRT_SECURE_NO_WARNINGS
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -6,7 +7,7 @@
 
 #define SERVERIP "0:0:0:0:0:0:0:1"
 #define SERVERPORT 9000
-#define BUFSIZE 512
+#define BUFSIZE 50
 
 using std::cout;
 using std::endl;
@@ -81,35 +82,28 @@ int main(int argc, char* argv) {
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
 	char buf[BUFSIZE + 1];
-	int len;
-	while (true) {
-		cout << "[보낼 데이터] : ";
-		cin.getline(buf, BUFSIZE + 1);
-		len = strlen(buf);
-		if (len == 0) break;
+	char* tmpTxt[]{
+		"Hellow",
+		"Nice to meet you",
+		"A lot of issue to say",
+		"Either I do",
+	};
 
-		retval = send(sock, buf, len, 0);
+	for (auto i : tmpTxt) {
+		memset(buf, '#', sizeof(buf));
+		strncpy(buf, i, strlen(i));
+		retval = send(sock, buf, BUFSIZE, 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("send()");
 			break;
 		}
-
-		cout << "[TCP 클라이언트] " << retval << "바이트 전송 완료 ";
-
-		retval = recvn(sock, buf, retval, 0);
-		if (retval == SOCKET_ERROR) {
-			err_display("recv()");
+		else if (retval == 0) {
 			break;
 		}
-		else if (retval == 0) break;
-
-		buf[retval] = '\0';
-
-		cout << "[TCP 클라이언트] " << retval << "바이트 수신 완료 ";
-		cout << "[받은 데이터] : " << buf << endl;
-
-
+		cout << "[TCP 클라이언트] " << retval << "바이트 전송완료" << endl;
 	}
+
+	cout << "[TCP 클라이언트] 종료" << endl;
 	closesocket(sock);
 	WSACleanup();
 }
