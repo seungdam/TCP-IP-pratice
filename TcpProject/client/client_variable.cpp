@@ -88,11 +88,12 @@ int main(int argc, char* argv) {
 		"A lot of issue to say",
 		"Either I do",
 	};
-
+	int len;
 	for (auto i : tmpTxt) {
-		memset(buf, '#', sizeof(buf));
+		len = strlen(i);
 		strncpy(buf, i, strlen(i));
-		retval = send(sock, buf, BUFSIZE, 0);
+		buf[len++] = '\n';
+		retval = send(sock, buf, len, 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("send()");
 			break;

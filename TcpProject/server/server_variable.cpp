@@ -131,10 +131,11 @@ int main(int argc, char* argv) {
 			else if (retval == 0) // 보낸 데이터가 0일 경우
 				break;
 
-			//buf[retval] = '\0';
+			buf[retval] = '\0';
 			cout << "[TCP\\" << ipaddr << "] : " << buf << endl;
 
 		}
+		cout << "[TCP 서버] 클라이언트 종료 : " << ipaddr << endl;
 		closesocket(client_sock);
 	}
 	closesocket(listen_sock);
