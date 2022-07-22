@@ -1,4 +1,5 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS // 최신 VC++ 컴파일 시 경고 방지
+#define _CRT_SECURE_NO_WARNINGS
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -81,6 +82,26 @@ int main(int argc, char* argv) {
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
 	char buf[BUFSIZE + 1];
+	char* tmpTxt[]{
+		"Hellow",
+		"Nice to meet you",
+		"A lot of issue to say",
+		"Either I do",
+	};
+
+	for (auto i : tmpTxt) {
+		memset(buf, '#', sizeof(buf));
+		strncpy(buf, i, strlen(i));
+		retval = send(sock, buf, BUFSIZE, 0);
+		if (retval == SOCKET_ERROR) {
+			err_display("send()");
+			break;
+		}
+		else if (retval == 0) {
+			break;
+		}
+		cout << "[TCP 클라이언트] " << retval << "바이트 전송완료" << endl;
+	}
 
 	cout << "[TCP 클라이언트] 종료" << endl;
 	closesocket(sock);	
