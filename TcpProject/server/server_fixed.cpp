@@ -104,7 +104,7 @@ int main(int argc, char* argv) {
 
 		// 데이터 수신
 		while (true) {
-			retval = recv(client_sock, buf, BUFSIZE + 1, 0);
+			retval = recvn(client_sock, buf, BUFSIZE + 1, 0);
 			if (retval == SOCKET_ERROR) {
 				err_display("recv()");
 				break;
