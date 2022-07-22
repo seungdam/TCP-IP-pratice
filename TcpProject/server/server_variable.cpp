@@ -48,7 +48,9 @@ int recv_ahead(SOCKET s, char* p) {
 		else if (nbytes == 0) return 0;
 		ptr = buf;
 	}
-
+	--nbytes;
+	*p = *ptr++;
+	return 1;
 }
 
 int main(int argc, char* argv) {
