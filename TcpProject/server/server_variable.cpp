@@ -53,6 +53,27 @@ int recv_ahead(SOCKET s, char* p) {
 	return 1;
 }
 
+int recv_line(SOCKET s, char* buf, int maxlen) {
+	int n, nbytes;
+	char c;
+	char* ptr = buf;
+	for (n = 1; n < maxlen; ++n) {
+		nbytes = recv_ahead(s, &c);
+		if (nbytes == 1) {
+			*ptr++ = c;
+			if (c == '\n') break; // EOR 를 개행문자 \n으로 설정
+		}
+		else if (nbytes == 0) {
+			*ptr = 0;
+			return n - 1;
+		}
+		else return SOCKET_ERROR;
+	}
+	*ptr = 0;
+	return n;
+
+}
+
 int main(int argc, char* argv) {
 	WSADATA wsa;
 	int retval;
@@ -102,7 +123,7 @@ int main(int argc, char* argv) {
 
 		// 데이터 수신
 		while (true) {
-			retval = recv(client_sock, buf, BUFSIZE + 1, 0);
+			retval = recv_line(client_sock, buf, BUFSIZE + 1);
 			if (retval == SOCKET_ERROR) {
 				err_display("recv()");
 				break;
@@ -110,15 +131,9 @@ int main(int argc, char* argv) {
 			else if (retval == 0) // 보낸 데이터가 0일 경우
 				break;
 
-			buf[retval] = '\0';
+			//buf[retval] = '\0';
 			cout << "[TCP\\" << ipaddr << "] : " << buf << endl;
 
-			// 클라이언트에게 다시 재전송
-			retval = send(client_sock, buf, retval, 0);
-			if (retval == SOCKET_ERROR) {
-				err_display("send()");
-				break;
-			}
 		}
 		closesocket(client_sock);
 	}
