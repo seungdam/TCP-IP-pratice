@@ -93,7 +93,7 @@ int main(int argc, char* argv) {
 			else if (retval == 0) // 보낸 데이터가 0일 경우
 				break;
 
-			buf[retval] =  '\0';
+			buf[retval] = '\0';
 			cout << "[TCP\\" << ipaddr << "] : " << buf << endl;
 
 			// 클라이언트에게 다시 재전송
