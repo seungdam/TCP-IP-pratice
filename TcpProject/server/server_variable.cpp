@@ -36,6 +36,21 @@ void err_display(char* msg) {
 	LocalFree(lpMsgBuf);
 }
 
+// 내부 구현용 함수
+int recv_ahead(SOCKET s, char* p) {
+	_declspec(thread) static int nbytes = 0;
+	_declspec(thread) static char buf[1024];
+	_declspec(thread) static char* ptr;
+
+	if (nbytes == 0 || nbytes == SOCKET_ERROR) {
+		nbytes = recv(s, buf, sizeof(buf), 0);
+		if (nbytes == SOCKET_ERROR) return SOCKET_ERROR;
+		else if (nbytes == 0) return 0;
+		ptr = buf;
+	}
+
+}
+
 int main(int argc, char* argv) {
 	WSADATA wsa;
 	int retval;
