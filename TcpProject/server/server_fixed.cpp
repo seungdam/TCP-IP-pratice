@@ -36,6 +36,25 @@ void err_display(char* msg) {
 	LocalFree(lpMsgBuf);
 }
 
+int recvn(SOCKET s, char* buf, int len, int flags) {
+	int received; // 받은 데이터양
+	int left = len;
+	char* ptr = buf;
+	while (left > 0) {
+		received = recv(s, buf, len, flags);
+		if (received == SOCKET_ERROR) {
+			return received;
+		}
+		else if (received == 0)
+			break;
+
+		left -= received;
+		ptr += received;
+	}
+
+	return (len - left);
+}
+
 int main(int argc, char* argv) {
 	WSADATA wsa;
 	int retval;
