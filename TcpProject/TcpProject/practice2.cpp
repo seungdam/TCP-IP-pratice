@@ -36,9 +36,11 @@ int main() {
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(3, 2), &wsa) != 0)
 		return 0;
+	// 연습문제 1
 	isLittleEndian();
 	isBigEndian();
 
+	// 연습문제 2
 	u_short x1 = 0x1234;// unsigned short
 	u_long  y1 = 0x12345678;// unsigned long
 
@@ -59,5 +61,15 @@ int main() {
 	cout << "0x" << std::hex << x2 << endl;
 	cout << "0x" << std::hex << y2 << endl;
 
+	// 연습문제 3
+	char dn[256];
+	ZeroMemory(&dn,sizeof(dn));
+	std::cin >> dn;
+
+	hostent* ptr = gethostbyname(dn);
+	for(int i = 0; ptr->h_aliases[i] != NULL; ++i)
+		cout << ptr->h_aliases[i] << endl;
+	for (int i = 0; ptr->h_addr_list[i] != NULL; ++i)
+	cout << inet_ntoa(*(IN_ADDR*)ptr->h_addr_list) << endl;
 	WSACleanup();
 }
