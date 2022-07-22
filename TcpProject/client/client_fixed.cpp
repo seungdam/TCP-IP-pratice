@@ -6,7 +6,7 @@
 
 #define SERVERIP "0:0:0:0:0:0:0:1"
 #define SERVERPORT 9000
-#define BUFSIZE 512
+#define BUFSIZE 50
 
 using std::cout;
 using std::endl;
@@ -81,35 +81,8 @@ int main(int argc, char* argv) {
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
 	char buf[BUFSIZE + 1];
-	int len;
-	while (true) {
-		cout << "[보낼 데이터] : ";
-		cin.getline(buf, BUFSIZE + 1);
-		len = strlen(buf);
-		if (len == 0) break;
 
-		retval = send(sock, buf, len, 0);
-		if (retval == SOCKET_ERROR) {
-			err_display("send()");
-			break;
-		}
-
-		cout << "[TCP 클라이언트] " << retval << "바이트 전송 완료 ";
-
-		retval = recvn(sock, buf, retval, 0);
-		if (retval == SOCKET_ERROR) {
-			err_display("recv()");
-			break;
-		}
-		else if (retval == 0) break;
-
-		buf[retval] = '\0';
-
-		cout << "[TCP 클라이언트] " << retval << "바이트 수신 완료 ";
-		cout << "[받은 데이터] : " << buf << endl;
-
-
-	}
-	closesocket(sock);
+	cout << "[TCP 클라이언트] 종료" << endl;
+	closesocket(sock);	
 	WSACleanup();
 }

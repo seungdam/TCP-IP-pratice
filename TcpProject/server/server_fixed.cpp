@@ -5,7 +5,7 @@
 #include <iostream>
 
 #define SERVERPORT 9000
-#define BUFSIZE 512
+#define BUFSIZE 50
 
 using std::cout;
 using std::endl;
@@ -95,15 +95,10 @@ int main(int argc, char* argv) {
 
 			buf[retval] = '\0';
 			cout << "[TCP\\" << ipaddr << "] : " << buf << endl;
-
-			// 클라이언트에게 다시 재전송
-			retval = send(client_sock, buf, retval, 0);
-			if (retval == SOCKET_ERROR) {
-				err_display("send()");
-				break;
-			}
 		}
+		cout << "[TCP 서버] 클라이언트 종료 : " << ipaddr << endl;
 		closesocket(client_sock);
+
 	}
 	closesocket(listen_sock);
 	WSACleanup();
