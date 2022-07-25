@@ -88,8 +88,32 @@ int main() {
 		}
 
 		cout << "[TCP 서버]" << " 클라이언트 접속 : IP 주소: " << inet_ntoa(clientaddr.sin_addr) << "포트 번호: " << ntohs(clientaddr.sin_port) << endl;
-	}
+		
+		while (true) {
+			
+			// 고정길이 부분 (받을 데이터의 길이와 같은 정보가 포함되어있음)
+			retval = recvn(client_sock, (char*)&len, sizeof(int), 0); // 고정길이 32비트 만큼 데이터를 보낸다.
+			if (retval == SOCKET_ERROR) {
+				err_display("recv()");
+				break;
+			}
+			else if (retval == 0) break;
 
+			retval = recvn(client_sock, buf, len, 0);
+			if (retval == SOCKET_ERROR) {
+				err_display("recv()");
+				break;
+			}
+			else if (retval == 0) break;
+
+			buf[retval] = '\0';
+
+			cout << "[TCP/" << inet_ntoa(clientaddr.sin_addr) << ":" << ntohs(clientaddr.sin_port)<<"] 전송된 데이터: " << buf << endl;
+		}
+		closesocket(client_sock);
+		cout << "[TCP 서버]" << " 클라이언트 종료 : IP 주소: " << inet_ntoa(clientaddr.sin_addr) << "포트 번호: " << ntohs(clientaddr.sin_port) << endl;
+	}
+	closesocket(listen_sock);
 	WSACleanup();
 	return 0;
 }
