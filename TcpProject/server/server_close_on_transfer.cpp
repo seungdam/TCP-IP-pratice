@@ -46,7 +46,7 @@ int recvn(SOCKET s, char* buf, int len, int flags) {
 		if (received == SOCKET_ERROR) {
 			return received;
 		}
-		else if (received == 0) return 0;
+		else if (received == 0) break;
 
 		left -= received;
 		ptr += received;
@@ -81,7 +81,7 @@ int main() {
 	char buf[BUFSIZE + 1];
 
 	while (true) {
-
+		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (sockaddr*)&clientaddr, &addrlen);
 		if (client_sock == INVALID_SOCKET) {
 			err_display("socket()");
