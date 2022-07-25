@@ -111,7 +111,7 @@ int main() {
 			cout << "[TCP/" << inet_ntoa(clientaddr.sin_addr) << ":" << ntohs(clientaddr.sin_port)<<"] 전송된 데이터: " << buf << endl;
 		}
 		closesocket(client_sock);
-		cout << "[TCP 서버]" << " 클라이언트 종료 : IP 주소: " << inet_ntoa(clientaddr.sin_addr) << "포트 번호: " << ntohs(clientaddr.sin_port) << endl;
+		cout << "[TCP 서버]" << " 클라이언트 종료 : IP 주소: " << inet_ntoa(clientaddr.sin_addr) << " 포트 번호: " << ntohs(clientaddr.sin_port) << endl;
 	}
 	closesocket(listen_sock);
 	WSACleanup();
