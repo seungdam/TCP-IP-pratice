@@ -63,7 +63,6 @@ int main(int argc, char* argv[])
 	int retval;
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(3, 2), &wsa) != 0) return 1;
-
 	SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sock == INVALID_SOCKET) err_quit("socket()");
 
