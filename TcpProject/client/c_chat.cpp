@@ -4,10 +4,11 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iostream>
+#include <string>
 
 #define SERVERIP "127.0.0.1"
 #define SERVERPORT 9000
-#define BUFSIZE 50
+#define BUFSIZE 512
 
 using std::cout;
 using std::endl;
@@ -57,6 +58,9 @@ int recvn(SOCKET s, char* buf, int len, int flags) {
 	return (len - left);
 }
 
+
+
+
 int main(int argc, char* argv[])
 {
 	int retval;
@@ -79,25 +83,41 @@ int main(int argc, char* argv[])
 	char id[BUFSIZE];
 	char chat[BUFSIZE];
 
-	strcpy(id, argv[1]);
+	strcpy(id, "ohsd2");
 	strcat(id, ": ");
+	int bufsize;
 
 	while (true) {
 
 		cout << "Ã¤ÆÃ: ";
 		cin.getline(chat, BUFSIZE);
 		strcpy(buf, id);
-		strncat(buf, chat, BUFSIZE - strlen(buf));
-		retval = send(sock, buf, BUFSIZE, 0);
+		strcat(buf, chat);
+		bufsize = strlen(buf);
+		
+		retval = send(sock, (char*)&bufsize, sizeof(int), 0);
 		if (retval == SOCKET_ERROR) {
-			err_display("send()");
+			err_display("send()1");
+			break;
+		}
+	
+		retval = send(sock, buf, bufsize, 0);
+		if (retval == SOCKET_ERROR) {
+			err_display("send()2");
 			break;
 		}
 		else if (retval == 0) break;
-		
-		retval = recvn(sock, buf, BUFSIZE, 0);
+
+
+		retval = recvn(sock,(char*)&bufsize,sizeof(int), 0);
 		if (retval == SOCKET_ERROR) {
-			err_display("recv()");
+			err_display("recv()1");
+			break;
+		}
+
+		retval = recvn(sock, buf, bufsize, 0);
+		if (retval == SOCKET_ERROR) {
+			err_display("recv()2");
 			break;
 		}
 		cout << endl;

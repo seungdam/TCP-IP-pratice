@@ -6,7 +6,7 @@
 #include <iostream>
 
 #define SERVERPORT 9000
-#define BUFSIZE 50
+#define BUFSIZE 512
 
 using std::cout;
 using std::endl;
@@ -87,12 +87,13 @@ int main(int argc, char* argv[])
 	char id[BUFSIZE];
 	char chat[BUFSIZE];
 
-	strcpy(id, argv[1]);
+	strcpy(id, "ohsd1");
 	strcat(id, ": ");
 
-
+	int bufsize;
 
 	while (true) {
+		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (sockaddr*)&clientaddr, &addrlen);
 		if (client_sock == INVALID_SOCKET) {
 			err_display("accept()");
@@ -101,26 +102,41 @@ int main(int argc, char* argv[])
 		cout << "[TCP 서버]" << " 클라이언트 접속 : IP 주소: " << inet_ntoa(clientaddr.sin_addr) << "포트 번호: " << ntohs(clientaddr.sin_port) << endl;
 
 		while (true) {
-			retval = recvn(client_sock, buf, BUFSIZE, 0);
+			
+			retval = recvn(client_sock, (char*)&bufsize, sizeof(int), 0);
 			if (retval == SOCKET_ERROR) {
 				err_display("recv()");
 				break;
 			}
+
+			retval = recvn(client_sock, buf, bufsize, 0);
+			if (retval == SOCKET_ERROR) {
+				err_display("recv()");
+				break;
+			}
+
 			else if (retval == 0) break;
-			
 			buf[retval] = '\0';
 			cout << buf << endl;
 
 			cout << "채팅: ";
 			cin.getline(chat, BUFSIZE);
 			strcpy(buf, id);
-			strncat(buf, chat, BUFSIZE - strlen(buf));
-
-			retval = send(client_sock, buf, BUFSIZE, 0);
+			strcat(buf, chat);
+			bufsize = strlen(buf);
+			retval = send(client_sock, (char*)&bufsize, sizeof(int), 0);
+			
 			if (retval == SOCKET_ERROR) {
-				err_display("send()");
+				err_display("send()1");
 				break;
 			}
+
+			retval = send(client_sock, buf, bufsize, 0);
+			if (retval == SOCKET_ERROR) {
+				err_display("send()2");
+				break;
+			}
+			cout << " " << retval << "바이트 전송" << endl;
 		}
 		closesocket(client_sock);
 		cout << "접속 종료" << endl;
