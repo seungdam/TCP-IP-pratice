@@ -33,5 +33,8 @@
     <ClCompile Include="c_chat.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="client_send_file.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
