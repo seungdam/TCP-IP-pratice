@@ -1,11 +1,12 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS // 최신 VC++ 컴파일 시 경고 방지
+#define _CRT_SECURE_NO_WARNINGS
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iostream>
 
 #define SERVERPORT 9000
-#define BUFSIZE 1024
+#define BUFSIZE 50
 
 using std::cout;
 using std::endl;
@@ -43,52 +44,62 @@ int recvn(SOCKET s, char* buf, int len, int flags) {
 
 	while (left > 0) {
 		received = recv(s, buf, left, flags);
-		if (received == SOCKET_ERROR) {
-			return received;
-		}
+
+		if (received == SOCKET_ERROR) return received;
 		else if (received == 0) break;
 
 		left -= received;
 		ptr += received;
 	}
+
 	return (len - left);
 }
 
-int main() {
+int main(int argc, char* argv[])
+{
 	int retval;
-
-	WSADATA wsa; // 윈속
+	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(3, 2), &wsa) != 0) return 1;
+
 
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
 
 	sockaddr_in serveraddr;
-	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
+	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	serveraddr.sin_port = htons(SERVERPORT);
 
+	// bind()
 	retval = bind(listen_sock, (sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("bind()");
-
+	// listen()
 	retval = listen(listen_sock, SOMAXCONN);
 	if (retval == SOCKET_ERROR) err_quit("listen()");
 
 	SOCKET client_sock;
 	sockaddr_in clientaddr;
-	int addrlen;
 	ZeroMemory(&clientaddr, sizeof(clientaddr));
+	int addrlen;
+	
 	char buf[BUFSIZE + 1];
+	char id[BUFSIZE];
+	char chat[BUFSIZE];
+
+	strcpy(id, argv[1]);
+	strcat(id, ": ");
+
+
 
 	while (true) {
-		addrlen = sizeof(clientaddr);
 		client_sock = accept(listen_sock, (sockaddr*)&clientaddr, &addrlen);
 		if (client_sock == INVALID_SOCKET) {
-			err_display("socket()");
+			err_display("accept()");
 			break;
 		}
+		cout << "[TCP 서버]" << " 클라이언트 접속 : IP 주소: " << inet_ntoa(clientaddr.sin_addr) << "포트 번호: " << ntohs(clientaddr.sin_port) << endl;
 
-		cout << "[TCP 서버]" << " 클라이언트 접속 : IP 주소: " << inet_ntoa(clientaddr.sin_addr) << " 포트 번호: " << ntohs(clientaddr.sin_port) << endl;
 		while (true) {
 			retval = recvn(client_sock, buf, BUFSIZE, 0);
 			if (retval == SOCKET_ERROR) {
@@ -96,16 +107,26 @@ int main() {
 				break;
 			}
 			else if (retval == 0) break;
-
+			
 			buf[retval] = '\0';
-			cout << "[TCP/" << inet_ntoa(clientaddr.sin_addr) << ":" << ntohs(clientaddr.sin_port) << "] 전송된 데이터: " << buf << endl;
-		}
-		cout << "[TCP 서버]" << " 클라이언트 종료 : IP 주소: " << inet_ntoa(clientaddr.sin_addr) << " 포트 번호: " << ntohs(clientaddr.sin_port) << endl;
-		cout << endl;
-		closesocket(client_sock);
+			cout << buf << endl;
 
+			cout << "채팅: ";
+			cin.getline(chat, BUFSIZE);
+			strcpy(buf, id);
+			strncat(buf, chat, BUFSIZE - strlen(buf));
+
+			retval = send(client_sock, buf, BUFSIZE, 0);
+			if (retval == SOCKET_ERROR) {
+				err_display("send()");
+				break;
+			}
+		}
+		closesocket(client_sock);
+		cout << "접속 종료" << endl;
 	}
+
 	closesocket(listen_sock);
 	WSACleanup();
-	return 0;
+
 }

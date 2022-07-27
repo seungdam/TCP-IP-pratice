@@ -30,5 +30,8 @@
     <ClCompile Include="server_close_on_transfer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="s_chat.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
