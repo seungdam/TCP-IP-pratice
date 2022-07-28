@@ -33,7 +33,7 @@ int main() {
 	HANDLE m_thread2 = (HANDLE)_beginthreadex(NULL, 0, f2, &arg2, 0, NULL);
 	if (m_thread2 == NULL) return 1;
 	CloseHandle(m_thread2); // 스레드를 조작할 일이 없으면 가능한 일찍 닫는 것이 중요. != 스레드 종료
-
+	
 	while (true) {
 		cout << "Main Thread ID: " << GetCurrentThreadId() << endl;
 		Sleep(1000);
