@@ -41,7 +41,7 @@ unsigned __stdcall ReadThread(LPVOID) {
 
 int main() {
 
-	m_writeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	m_writeEvent = CreateEvent(NULL, FALSE, FALSE, NULL); // 비신호 상태
 	if (m_writeEvent == NULL) return 1;
 	m_readEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
 	if (m_readEvent == NULL) return 1;
