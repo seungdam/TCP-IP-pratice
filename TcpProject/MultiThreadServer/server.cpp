@@ -3,6 +3,7 @@
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <process.h>
 #include <iostream>
 
 #define SERVERPORT 9000
@@ -99,7 +100,31 @@ int main() {
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_port = htons(SERVERPORT);
+	// bind
+	retval = bind(listen_sock, (sockaddr*)&serveraddr, sizeof(serveraddr));
+	if (retval == SOCKET_ERROR) err_quit("bind()");
 
+	retval = listen(listen_sock, SOMAXCONN);
+	if (retval == SOCKET_ERROR) err_quit("listen()");
 
+	SOCKET client_sock;
+	sockaddr_in clientaddr;
+	int addrlen;
+
+	while (true) {
+		addrlen = sizeof(clientaddr);
+		client_sock = accept(listen_sock, (sockaddr*)&clientaddr, &addrlen);
+		if (client_sock == INVALID_SOCKET) {
+			err_display("accept()");
+			break;
+		}
+		cout << "[TCP 서버]" << " 클라이언트 접속 : IP 주소: " << inet_ntoa(clientaddr.sin_addr) << "포트 번호: " << ntohs(clientaddr.sin_port) << endl;
+
+		HANDLE m_thread = (HANDLE)_beginthreadex(NULL, 0, ProcessClient, (LPVOID)client_sock, 0, NULL);
+		if (m_thread == NULL) closesocket(client_sock);
+		else CloseHandle(m_thread);
+	}
+	closesocket(listen_sock);
+	WSACleanup();
 	return 0;
 }
