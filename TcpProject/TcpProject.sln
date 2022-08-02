@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "client\client.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tread", "tread\tread.vcxproj", "{12F2D16A-E382-4B0A-B027-B47D2568749A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MultiThreadServer", "MultiThreadServer\MultiThreadServer.vcxproj", "{61721516-5EDA-4EB7-8CA1-FCBF1BC4E611}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{12F2D16A-E382-4B0A-B027-B47D2568749A}.Release|x64.Build.0 = Release|x64
 		{12F2D16A-E382-4B0A-B027-B47D2568749A}.Release|x86.ActiveCfg = Release|Win32
 		{12F2D16A-E382-4B0A-B027-B47D2568749A}.Release|x86.Build.0 = Release|Win32
+		{61721516-5EDA-4EB7-8CA1-FCBF1BC4E611}.Debug|x64.ActiveCfg = Debug|x64
+		{61721516-5EDA-4EB7-8CA1-FCBF1BC4E611}.Debug|x64.Build.0 = Debug|x64
+		{61721516-5EDA-4EB7-8CA1-FCBF1BC4E611}.Debug|x86.ActiveCfg = Debug|Win32
+		{61721516-5EDA-4EB7-8CA1-FCBF1BC4E611}.Debug|x86.Build.0 = Debug|Win32
+		{61721516-5EDA-4EB7-8CA1-FCBF1BC4E611}.Release|x64.ActiveCfg = Release|x64
+		{61721516-5EDA-4EB7-8CA1-FCBF1BC4E611}.Release|x64.Build.0 = Release|x64
+		{61721516-5EDA-4EB7-8CA1-FCBF1BC4E611}.Release|x86.ActiveCfg = Release|Win32
+		{61721516-5EDA-4EB7-8CA1-FCBF1BC4E611}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
