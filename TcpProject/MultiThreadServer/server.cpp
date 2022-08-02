@@ -6,6 +6,7 @@
 #include <iostream>
 
 #define SERVERPORT 9000
+#define BUFSIZE 50
 
 using namespace std;
 
@@ -49,6 +50,41 @@ int recvn(SOCKET s, char* buf, int len, int flags) {
 	}
 
 	return (len - left);
+}
+
+unsigned __stdcall ProcessClient(LPVOID arg) {
+	
+	int retval;
+	
+	SOCKET client_sock = (SOCKET)arg;
+	sockaddr_in clientaddr;
+	ZeroMemory(&clientaddr, sizeof(clientaddr));
+	int addrlen;
+	char buf[BUFSIZE + 1];
+
+	addrlen = sizeof(clientaddr);
+	getpeername(client_sock, (sockaddr*)&clientaddr, &addrlen); // 클라이언트 관련 정보 반환받기.
+
+	while (true) {
+		retval = recvn(client_sock, buf, BUFSIZE, 0);
+		
+		if (retval == SOCKET_ERROR) {
+			err_display("recv()");
+			break;
+		}
+		else if (retval == 0) break;
+
+		buf[retval] = '\0';
+		cout << "[TCP/" << inet_ntoa(clientaddr.sin_addr) << ":" << ntohs(clientaddr.sin_port) << "] 전송된 데이터: " << buf << endl;
+		retval = send(client_sock, buf, retval, 0);
+		if (retval == SOCKET_ERROR) {
+			err_display("recv()");
+			break;
+		}
+		else if (retval == 0) break;
+	}
+	closesocket(client_sock);
+	return 0;
 }
 
 int main() {
