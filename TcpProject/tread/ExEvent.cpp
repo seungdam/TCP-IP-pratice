@@ -20,7 +20,20 @@ unsigned __stdcall WriteThread(LPVOID) {
 	}
 }
 unsigned __stdcall ReadThread(LPVOID) {
+	int retval;
 
+	while (true) {
+		retval = WaitForSingleObject(m_writeEvent, INFINITE);
+		if (retval != WAIT_OBJECT_0) break;
+
+		std::cout << "ThreadID: " << GetCurrentThreadId() << " ";
+		for (auto i : buf)
+			std::cout << i << " ";
+		std::cout << std::endl;
+
+		ZeroMemory(buf, BUFSIZE);
+		SetEvent(m_readEvent);
+	}
 }
 
 
