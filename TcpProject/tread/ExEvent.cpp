@@ -18,6 +18,7 @@ unsigned __stdcall WriteThread(LPVOID) {
 
 		SetEvent(m_writeEvent); // 쓰기 완료. 비신호 -> 신호
 	}
+	return 0;
 }
 unsigned __stdcall ReadThread(LPVOID) {
 	int retval;
@@ -34,9 +35,25 @@ unsigned __stdcall ReadThread(LPVOID) {
 		ZeroMemory(buf, BUFSIZE);
 		SetEvent(m_readEvent);
 	}
+	return 0;
 }
 
 
 int main() {
+
+	m_writeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	if (m_writeEvent == NULL) return 1;
+	m_readEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+	if (m_readEvent == NULL) return 1;
+
+	HANDLE handles[3];
+	handles[0] = (HANDLE)_beginthreadex(NULL,0,  WriteThread,NULL,0,NULL);
+	handles[1] = (HANDLE)_beginthreadex(NULL, 0, ReadThread, NULL, 0, NULL);
+	handles[2] = (HANDLE)_beginthreadex(NULL, 0, ReadThread, NULL, 0, NULL);
+
+	WaitForMultipleObjects(3, handles, TRUE, INFINITE);
+
+	CloseHandle(m_writeEvent);
+	CloseHandle(m_readEvent);
 	return 0;
 }
