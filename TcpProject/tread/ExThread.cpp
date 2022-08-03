@@ -5,6 +5,10 @@
 using std::cout;
 using std::endl;
 
+struct POSITION {
+	int x, y, z;
+};
+
 DWORD WINAPI f(LPVOID arg) {
 	int a = (int)arg;
 	while(true) {
