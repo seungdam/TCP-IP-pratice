@@ -89,10 +89,11 @@ unsigned __stdcall ProcessClient(LPVOID arg) {
 }
 
 int main() {
+	//주 스레드를 최 우선 순위로
+	SetThreadPriority(main, THREAD_PRIORITY_TIME_CRITICAL);
 	int retval;
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(3, 2), &wsa) != 0) return 1;
-
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (listen_sock == INVALID_SOCKET)  err_quit("socket()");
 
