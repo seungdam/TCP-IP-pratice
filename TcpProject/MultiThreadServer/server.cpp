@@ -85,12 +85,14 @@ unsigned __stdcall ProcessClient(LPVOID arg) {
 		else if (retval == 0) break;
 	}
 	closesocket(client_sock);
+	_endthreadex(0);
 	return 0;
 }
 
 int main() {
-	//주 스레드를 최 우선 순위로
-	SetThreadPriority(main, THREAD_PRIORITY_TIME_CRITICAL);
+	//현재 스레드의 우선순위를 변경
+	SetThreadPriority(GetCurrentProcess(), THREAD_PRIORITY_ABOVE_NORMAL);
+	GetCurrentProcess();
 	int retval;
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(3, 2), &wsa) != 0) return 1;
