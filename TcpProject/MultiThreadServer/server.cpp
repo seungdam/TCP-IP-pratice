@@ -11,6 +11,12 @@
 
 using namespace std;
 
+struct SOCKANDADDR {
+	SOCKET s;
+	sockaddr_in addr;
+};
+
+
 void err_quit(char* msg) {
 	LPVOID lpMsgBuf;
 
@@ -57,17 +63,14 @@ unsigned __stdcall ProcessClient(LPVOID arg) {
 	
 	int retval;
 	
-	SOCKET client_sock = (SOCKET)arg;
-	sockaddr_in clientaddr;
-	ZeroMemory(&clientaddr, sizeof(clientaddr));
+	SOCKANDADDR* ms = (SOCKANDADDR*)arg;
 	int addrlen;
 	char buf[BUFSIZE + 1];
 
-	addrlen = sizeof(clientaddr);
-	getpeername(client_sock, (sockaddr*)&clientaddr, &addrlen); // 클라이언트 관련 정보 반환받기.
+	addrlen = sizeof(ms->addr);
 
 	while (true) {
-		retval = recvn(client_sock, buf, BUFSIZE, 0);
+		retval = recvn(ms->s, buf, BUFSIZE, 0);
 		
 		if (retval == SOCKET_ERROR) {
 			err_display("recv()");
@@ -76,15 +79,15 @@ unsigned __stdcall ProcessClient(LPVOID arg) {
 		else if (retval == 0) break;
 
 		buf[retval] = '\0';
-		cout << "[TCP/" << inet_ntoa(clientaddr.sin_addr) << ":" << ntohs(clientaddr.sin_port) << "] 전송된 데이터: " << buf << endl;
-		retval = send(client_sock, buf, retval, 0);
+		cout << "[TCP/" << inet_ntoa(ms->addr.sin_addr) << ":" << ntohs(ms->addr.sin_port) << "] 전송된 데이터: " << buf << endl;
+		retval = send(ms->s, buf, retval, 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("recv()");
 			break;
 		}
 		else if (retval == 0) break;
 	}
-	closesocket(client_sock);
+	closesocket(ms->s);
 	_endthreadex(0);
 	return 0;
 }
@@ -122,8 +125,12 @@ int main() {
 			break;
 		}
 		cout << "[TCP 서버]" << " 클라이언트 접속 : IP 주소: " << inet_ntoa(clientaddr.sin_addr) << "포트 번호: " << ntohs(clientaddr.sin_port) << endl;
+		
+		SOCKANDADDR ms;
+		ms.s = client_sock;
+		ms.addr = clientaddr;
 
-		HANDLE m_thread = (HANDLE)_beginthreadex(NULL, 0, ProcessClient, (LPVOID)client_sock, 0, NULL);
+		HANDLE m_thread = (HANDLE)_beginthreadex(NULL, 0, ProcessClient, (LPVOID)&ms, 0, NULL);
 		if (m_thread == NULL) closesocket(client_sock);
 		else CloseHandle(m_thread);
 	}
