@@ -6,7 +6,7 @@
 #include <process.h>
 #include <iostream>
 
-#define SERVERPORT 9000
+#define SERVERPORT 4444
 #define BUFSIZE 50
 
 using namespace std;
