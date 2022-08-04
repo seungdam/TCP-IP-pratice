@@ -57,7 +57,15 @@ int main() {
 	int len;
 
 	while (1) {
-
+		cout << "chat: ";
+		cin.getline(buf, BUFSIZE);
+		len = strlen(buf);
+		
+		retval = sendto(sock, buf, len, 0, (sockaddr*)&serveraddr, sizeof(serveraddr));
+		if (retval == SOCKET_ERROR) {
+			err_display("sendto()");
+			continue;
+		}
 	}
 
 	WSACleanup();
