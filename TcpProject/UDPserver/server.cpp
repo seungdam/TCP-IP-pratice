@@ -41,7 +41,7 @@ int main() {
 	if (WSAStartup(MAKEWORD(3, 2), &wsa) != 0) return 1;
 
 	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (sock != INVALID_SOCKET) err_quit("socket()");
+	if (sock == INVALID_SOCKET) err_quit("socket()");
 
 	sockaddr_in serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
@@ -49,9 +49,31 @@ int main() {
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_port = htons(SERVERPORT);
 
-	retval = bind(sock, (sockaddr*)&sock, sizeof(serveraddr));
+	retval = bind(sock, (sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("bind()");
 
+	// 수신한 데이터가 온 클라이언트 정보
+	sockaddr_in clientaddr;
+	int addrlen;
+	
+	char buf[BUFSIZE + 1];
+
+	while (1) {
+		addrlen = sizeof(clientaddr);
+		retval = recvfrom(sock, buf,BUFSIZE,0,(sockaddr*)&clientaddr,&addrlen); // 그냥 받은 데이터를 버퍼에 넣고 그 데이터를 보낸 클라이언트 정보를 저장
+		if (retval == SOCKET_ERROR) {
+			err_display("recvfrom()");
+			continue;
+		}
+		buf[retval] = '\0';
+		cout << "[UDP: " << inet_ntoa(clientaddr.sin_addr) << ": " << ntohs(clientaddr.sin_port) << "]: " << buf << endl;
+		
+		retval = sendto(sock, buf, BUFSIZE, 0, (sockaddr*)&clientaddr, sizeof(clientaddr));
+		if (retval == SOCKET_ERROR) {
+			err_display("sendto()");
+			continue;
+		}
+	}
 
 	closesocket(sock);
 	WSACleanup();
