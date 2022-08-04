@@ -66,8 +66,19 @@ int main() {
 			err_display("sendto()");
 			continue;
 		}
-	}
+		addrlen = sizeof(peeraddr);
+		buf[retval] = '\0';
+		retval = recvfrom(sock, buf, BUFSIZE, 0, (sockaddr*)&peeraddr, &addrlen);
+		if (retval == SOCKET_ERROR) {
+			err_display("recvfrom()");
+			continue;
+		}
 
+		if (memcmp(&peeraddr, &serveraddr, sizeof(peeraddr))) {
+			cout << "잘못된 데이터" << endl;
+		}
+	}
+	closesocket(sock);
 	WSACleanup();
 
 }
