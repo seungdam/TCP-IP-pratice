@@ -55,6 +55,24 @@ int main() {
 	retval = bind(sock, (sockaddr*)&localaddr, sizeof(localaddr));
 	if (retval == SOCKET_ERROR) err_quit("bind()");
 
+	// 데이터 통신에 사용할 변수 : 송신자 정보, 문자열 버퍼
+	sockaddr_in peeraddr;
+	ZeroMemory(&peeraddr, sizeof(peeraddr));
+	int addrlen;
+	char buf[BUFSIZE + 1];
 
+	while (1) {
+		addrlen = sizeof(peeraddr);
+		retval = recvfrom(sock, buf, BUFSIZE, 0, (sockaddr*)&peeraddr, &addrlen);
+		if (retval == SOCKET_ERROR) {
+			err_display("recvfrom()");
+			continue;
+		}
+
+		buf[retval] = '\0';
+		printf("[UDP/%s:%d]: %s", inet_ntoa(peeraddr.sin_addr), ntohs(peeraddr.sin_port), buf);
+
+	}
+	closesocket(sock);
 	WSACleanup();
 }
