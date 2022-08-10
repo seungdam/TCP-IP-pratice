@@ -47,7 +47,7 @@ int main() {
 	if (sock == INVALID_SOCKET) err_quit("socket()");
 	
 	// 브로드 캐스팅 활성화
-	bool bEnable;
+	bool bEnable = true;
 	retval = setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char*)&bEnable, sizeof(bEnable));
 	if (retval == SOCKET_ERROR) err_quit("setsockopt()");
 
@@ -57,6 +57,20 @@ int main() {
 	remoteaddr.sin_family = AF_INET;
 	remoteaddr.sin_addr.s_addr = inet_addr(REMOTEIP);
 	remoteaddr.sin_port = htons(REMOTEPORT);
+
+	// 데이터 송신
+	char buf[BUFSIZE + 1];
+
+	while (1) {
+		cout << "chat: ";
+		cin.getline(buf, BUFSIZE);
+		retval = sendto(sock, buf, BUFSIZE, 0, (sockaddr*)&remoteaddr, sizeof(remoteaddr));
+		if (retval == SOCKET_ERROR) {
+			err_display("sendto()");
+			continue;
+		}
+		cout << "\n" << retval << "바이트 전송 완료" << endl;
+	}
 
 	closesocket(sock);
 	WSACleanup();
