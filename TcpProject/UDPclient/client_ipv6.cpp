@@ -4,7 +4,7 @@
 #include <ws2tcpip.h>
 #include <iostream>
 
-#define SERVERIP "0.0.0.0.0.0.0.1"
+#define SERVERIP "0:0:0:0:0:0:0:1"
 #define SERVERPORT 9000
 #define BUFSIZE 512
 
@@ -46,7 +46,7 @@ int main() {
 
 	sockaddr_in6 serveraddr;
 	int addrlen;
-	
+	addrlen = sizeof(serveraddr);
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin6_family = AF_INET6;
 	WSAStringToAddress(SERVERIP, AF_INET6, NULL, (sockaddr*)&serveraddr, &addrlen);
@@ -66,8 +66,8 @@ int main() {
 			err_display("sendto()");
 			continue;
 		}
-
-		retval = recvfrom(sock, buf, BUFSIZE, 0, (sockaddr*)&peeraddr, &len);
+	
+		retval = recvfrom(sock, buf, BUFSIZE, 0, (sockaddr*)&peeraddr, &addrlen);
 		if (retval == SOCKET_ERROR) {
 			err_display("recvfrom()");
 			continue;
