@@ -1,8 +1,10 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS // 최신 VC++ 컴파일 시 경고 방지
+#define _CRT_SECURE_NO_WARNINGS
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iostream>
+#include <chrono>
 
 #define SERVERPORT 9000
 #define BUFSIZE 512
@@ -55,9 +57,7 @@ int main() {
 	// 수신한 데이터가 온 클라이언트 정보
 	sockaddr_in clientaddr;
 	int addrlen;
-	
 	char buf[BUFSIZE + 1];
-
 	while (1) {
 		addrlen = sizeof(clientaddr);
 		retval = recvfrom(sock, buf,BUFSIZE,0,(sockaddr*)&clientaddr,&addrlen); // 그냥 받은 데이터를 버퍼에 넣고 그 데이터를 보낸 클라이언트 정보를 저장
@@ -67,11 +67,23 @@ int main() {
 		}
 		buf[retval] = '\0';
 		cout << "[UDP: " << inet_ntoa(clientaddr.sin_addr) << ": " << ntohs(clientaddr.sin_port) << "]: " << buf << endl;
-		
-		retval = sendto(sock, buf, strlen(buf), 0, (sockaddr*)&clientaddr, sizeof(clientaddr));
-		if (retval == SOCKET_ERROR) {
-			err_display("sendto()");
-			continue;
+		if (strcmp(buf, "시간") == 0) {
+			auto now = std::chrono::system_clock::now();
+			time_t mt = std::chrono::system_clock::to_time_t(now);
+			strcpy(buf, std::ctime(&mt));
+
+			retval = sendto(sock, buf, strlen(buf), 0, (sockaddr*)&clientaddr, sizeof(clientaddr));
+			if (retval == SOCKET_ERROR) {
+				err_display("sendto()");
+				continue;
+			}
+		}
+		else {
+			retval = sendto(sock, buf, strlen(buf), 0, (sockaddr*)&clientaddr, sizeof(clientaddr));
+			if (retval == SOCKET_ERROR) {
+				err_display("sendto()");
+				continue;
+			}
 		}
 	}
 
