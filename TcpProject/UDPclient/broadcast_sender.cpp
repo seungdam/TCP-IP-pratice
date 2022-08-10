@@ -4,8 +4,8 @@
 #include <ws2tcpip.h>
 #include <iostream>
 
-#define SERVERIP "127.0.0.1"
-#define SERVERPORT 9000
+#define REMOTEIP "255.255.255.255"
+#define REMOTEPORT 9000
 #define BUFSIZE 512
 
 using std::cout;
@@ -50,6 +50,13 @@ int main() {
 	bool bEnable;
 	retval = setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char*)&bEnable, sizeof(bEnable));
 	if (retval == SOCKET_ERROR) err_quit("setsockopt()");
+
+	// 브로드캐스트 ip 주소 구조체 초기화
+	sockaddr_in remoteaddr;
+	ZeroMemory(&remoteaddr, sizeof(remoteaddr));
+	remoteaddr.sin_family = AF_INET;
+	remoteaddr.sin_addr.s_addr = inet_addr(REMOTEIP);
+	remoteaddr.sin_port = htons(REMOTEPORT);
 
 	closesocket(sock);
 	WSACleanup();
