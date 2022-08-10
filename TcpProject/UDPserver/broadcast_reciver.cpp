@@ -51,6 +51,10 @@ int main() {
 	localaddr.sin_family = AF_INET;
 	localaddr.sin_port = htons(LOCALPORT);
 
+	// bind()
+	retval = bind(sock, (sockaddr*)&localaddr, sizeof(localaddr));
+	if (retval == SOCKET_ERROR) err_quit("bind()");
+
 
 	WSACleanup();
 }
