@@ -21,5 +21,8 @@
     <ClCompile Include="client_ipv6.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="broadcast_sender.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
