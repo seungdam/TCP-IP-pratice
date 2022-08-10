@@ -66,6 +66,8 @@ int main() {
 			err_display("sendto()");
 			continue;
 		}
+
+		int sendbyte = retval;
 		addrlen = sizeof(peeraddr);
 		buf[retval] = '\0';
 		retval = recvfrom(sock, buf, strlen(buf), 0, (sockaddr*)&peeraddr, &addrlen);
@@ -74,7 +76,6 @@ int main() {
 			continue;
 		}
 
-		int sendbyte = retval;
 		sockaddr_in localaddr;
 		ZeroMemory(&localaddr, sizeof(localaddr));
 		retval = getsockname(sock, (sockaddr*)&localaddr, &addrlen);
