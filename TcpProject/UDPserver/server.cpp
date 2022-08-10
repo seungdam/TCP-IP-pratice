@@ -68,7 +68,7 @@ int main() {
 		buf[retval] = '\0';
 		cout << "[UDP: " << inet_ntoa(clientaddr.sin_addr) << ": " << ntohs(clientaddr.sin_port) << "]: " << buf << endl;
 		
-		retval = sendto(sock, buf, BUFSIZE, 0, (sockaddr*)&clientaddr, sizeof(clientaddr));
+		retval = sendto(sock, buf, strlen(buf), 0, (sockaddr*)&clientaddr, sizeof(clientaddr));
 		if (retval == SOCKET_ERROR) {
 			err_display("sendto()");
 			continue;
