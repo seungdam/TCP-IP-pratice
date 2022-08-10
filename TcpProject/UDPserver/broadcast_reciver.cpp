@@ -70,7 +70,7 @@ int main() {
 		}
 
 		buf[retval] = '\0';
-		printf("[UDP/%s:%d]: %s", inet_ntoa(peeraddr.sin_addr), ntohs(peeraddr.sin_port), buf);
+		printf("[UDP/%s:%d]: %s \n", inet_ntoa(peeraddr.sin_addr), ntohs(peeraddr.sin_port), buf);
 
 	}
 	closesocket(sock);

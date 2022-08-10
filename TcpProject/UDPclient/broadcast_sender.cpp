@@ -64,7 +64,7 @@ int main() {
 	while (1) {
 		cout << "chat: ";
 		cin.getline(buf, BUFSIZE);
-		retval = sendto(sock, buf, BUFSIZE, 0, (sockaddr*)&remoteaddr, sizeof(remoteaddr));
+		retval = sendto(sock, buf, strlen(buf), 0, (sockaddr*)&remoteaddr, sizeof(remoteaddr));
 		if (retval == SOCKET_ERROR) {
 			err_display("sendto()");
 			continue;
