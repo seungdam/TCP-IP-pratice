@@ -46,6 +46,10 @@ int main() {
 	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (sock == INVALID_SOCKET) err_quit("socket()");
 	
+	// 브로드 캐스팅 활성화
+	bool bEnable;
+	retval = setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char*)&bEnable, sizeof(bEnable));
+	if (retval == SOCKET_ERROR) err_quit("setsockopt()");
 
 	closesocket(sock);
 	WSACleanup();
