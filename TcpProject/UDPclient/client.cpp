@@ -66,16 +66,7 @@ int main() {
 			err_display("sendto()");
 			continue;
 		}
-
 		int sendbyte = retval;
-		addrlen = sizeof(peeraddr);
-		buf[retval] = '\0';
-		retval = recvfrom(sock, buf, strlen(buf), 0, (sockaddr*)&peeraddr, &addrlen);
-		if (retval == SOCKET_ERROR) {
-			err_display("recvfrom()");
-			continue;
-		}
-
 		sockaddr_in localaddr;
 		ZeroMemory(&localaddr, sizeof(localaddr));
 		retval = getsockname(sock, (sockaddr*)&localaddr, &addrlen);
@@ -84,6 +75,16 @@ int main() {
 			continue;
 		}
 		printf("[UDP/%s:%d]: %d 바이트 전송 \n", inet_ntoa(localaddr.sin_addr), ntohs(localaddr.sin_port), sendbyte);
+
+		addrlen = sizeof(peeraddr);
+		buf[retval] = '\0';
+		retval = recvfrom(sock, buf, BUFSIZE, 0, (sockaddr*)&peeraddr, &addrlen);
+		if (retval == SOCKET_ERROR) {
+			err_display("recvfrom()");
+			continue;
+		}
+		printf("[UDP/%s:%d]: %s 전송 받음 \n", inet_ntoa(localaddr.sin_addr), ntohs(localaddr.sin_port), buf);
+
 		if (memcmp(&peeraddr, &serveraddr, sizeof(peeraddr))) {
 			cout << "잘못된 데이터" << endl;
 		}
