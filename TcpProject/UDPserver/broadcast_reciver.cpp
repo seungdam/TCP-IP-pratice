@@ -41,6 +41,16 @@ int main() {
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(3, 2), &wsa) != 0) return 1;
 	
+	SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (sock == INVALID_SOCKET) err_quit("socket()");
+
+	// 瘤开 林家 家南 备炼眉 檬扁拳
+	sockaddr_in localaddr;
+	ZeroMemory(&localaddr, sizeof(localaddr));
+	localaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	localaddr.sin_family = AF_INET;
+	localaddr.sin_port = htons(LOCALPORT);
+
 
 	WSACleanup();
 }
