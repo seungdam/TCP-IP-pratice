@@ -74,6 +74,15 @@ int main() {
 			continue;
 		}
 
+		int sendbyte = retval;
+		sockaddr_in localaddr;
+		ZeroMemory(&localaddr, sizeof(localaddr));
+		retval = getsockname(sock, (sockaddr*)&localaddr, &addrlen);
+		if (retval == SOCKET_ERROR) {
+			err_display("getsockname()");
+			continue;
+		}
+		printf("[UDP/%s:%d]: %d 바이트 전송", inet_ntoa(localaddr.sin_addr), ntohs(localaddr.sin_port), &sendbyte);
 		if (memcmp(&peeraddr, &serveraddr, sizeof(peeraddr))) {
 			cout << "잘못된 데이터" << endl;
 		}
