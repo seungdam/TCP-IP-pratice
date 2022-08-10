@@ -58,13 +58,15 @@ int main() {
 	remoteaddr.sin_addr.s_addr = inet_addr(REMOTEIP);
 	remoteaddr.sin_port = htons(REMOTEPORT);
 
+	retval = connect(sock, (sockaddr*)&remoteaddr, sizeof(remoteaddr));
+
 	// 데이터 송신
 	char buf[BUFSIZE + 1];
 
 	while (1) {
 		cout << "chat: ";
 		cin.getline(buf, BUFSIZE);
-		retval = sendto(sock, buf, strlen(buf), 0, (sockaddr*)&remoteaddr, sizeof(remoteaddr));
+		retval = send(sock, buf, strlen(buf), 0);
 		if (retval == SOCKET_ERROR) {
 			err_display("sendto()");
 			continue;
