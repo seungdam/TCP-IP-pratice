@@ -49,8 +49,18 @@ public:
 		send_wsabuf.len = 0;
 		send_wsabuf.buf = send_msg;
 	}
-	void do_send();
-	void do_recv();
+	void do_send(int num_bytes) {
+		ZeroMemory(&recv_over, sizeof(recv_over));
+		recv_over.hEvent = (HANDLE)id; // 다른 클라이언트에게 전송될 때 몇번째 클라에서 전송된 데이터인지 알려주기 위함.
+		send_wsabuf.len = num_bytes;
+		WSASend(sock, &send_wsabuf, 1, 0, 0, &recv_over, send_callback);
+	}
+	void do_recv() {
+		ZeroMemory(&recv_over, sizeof(recv_over));
+		recv_over.hEvent = (HANDLE)id; // 해당 데이터가 어떤 클라이언트로 부터 전송됐는지 구별하기 위함.
+		DWORD recv_flag = 0;
+		WSARecv(sock, &recv_wsabuf, 1, 0, &recv_flag, &recv_over, recv_callback);
+	}
 	~SESSION();
 };
 
@@ -97,13 +107,13 @@ int main() {
 	
 }
 
-void do_recv() {
-	c_wsabuf[0].len = BUFSIZE;
-	c_wsabuf[0].buf = c_msg;
-	DWORD recv_flag = 0;
-	ZeroMemory(&c_over, sizeof(c_over));
-	WSARecv(c_sock, c_wsabuf, 1, NULL, &recv_flag, &c_over, recv_callback);
-}
+//void do_recv() {
+//	c_wsabuf[0].len = BUFSIZE;
+//	c_wsabuf[0].buf = c_msg;
+//	DWORD recv_flag = 0;
+//	ZeroMemory(&c_over, sizeof(c_over));
+//	WSARecv(c_sock, c_wsabuf, 1, NULL, &recv_flag, &c_over, recv_callback);
+//}
 
 // WSARecv 완료 시 OS에서 자동으로 호출
 void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags) {
