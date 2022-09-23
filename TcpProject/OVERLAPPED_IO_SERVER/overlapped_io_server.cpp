@@ -2,6 +2,7 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <iostream>
+#include <unordered_map>
 
 #define SERVER_PORT 9000
 #define BUFSIZE 256
@@ -32,10 +33,28 @@ void err_display(char* msg) {
 	LocalFree(lpMsgBuf);
 }
 
-SOCKET c_sock; // 클라이언트 소켓
-WSAOVERLAPPED c_over; // overlapped 구조체
-WSABUF c_wsabuf[1];
-char c_msg[BUFSIZE];
+class SESSION {
+	SOCKET sock; // 클라이언트 소켓
+	WSAOVERLAPPED recv_over; // overlapped 구조체
+	WSABUF recv_wsabuf;
+	WSABUF send_wsabuf;
+	char recv_msg[BUFSIZE];
+	char send_msg[BUFSIZE];
+	int id; // 맵에 저장한 session들을 탐색하기 위함
+public:
+	SESSION() { printf("error"); exit(1); };
+	SESSION(int id,SOCKET s):id(id),sock(s) {
+		recv_wsabuf.len = BUFSIZE;
+		recv_wsabuf.buf = recv_msg;
+		send_wsabuf.len = 0;
+		send_wsabuf.buf = send_msg;
+	}
+	void do_send();
+	void do_recv();
+	~SESSION();
+};
+
+std::unordered_map<SOCKET, SESSION> clients;
 
 // OS에서 호출할 callback 함수 선언
 void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags);
