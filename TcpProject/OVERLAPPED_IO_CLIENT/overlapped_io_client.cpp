@@ -63,7 +63,14 @@ int main() {
 }
 
 void do_send() {
-	
+	printf("chat: ");
+	std::cin.getline(s_msg, BUFSIZE);
+	printf("\n");
+
+	s_wsabuf[0].len = BUFSIZE;
+	s_wsabuf[0].buf = s_msg;
+	ZeroMemory(&s_over, sizeof(s_over));
+	WSASend(s_sock, s_wsabuf, 1, 0, 0, &s_over, send_callback);
 }
 
 // WSARecv 완료 시 OS에서 자동으로 호출
@@ -73,5 +80,4 @@ void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DW
 }
 
 void CALLBACK send_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags) {
-	
 }
