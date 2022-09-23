@@ -67,7 +67,7 @@ void do_send() {
 	std::cin.getline(s_msg, BUFSIZE);
 	printf("\n");
 
-	s_wsabuf[0].len = BUFSIZE;
+	s_wsabuf[0].len = strlen(s_msg);
 	s_wsabuf[0].buf = s_msg;
 	ZeroMemory(&s_over, sizeof(s_over));
 	WSASend(s_sock, s_wsabuf, 1, 0, 0, &s_over, send_callback);
@@ -76,8 +76,13 @@ void do_send() {
 // WSARecv 완료 시 OS에서 자동으로 호출
 void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags) {
 	if (0 == num_bytes) return;
-	
+	printf("Send from Server: %s", s_msg);
+	do_send();
 }
 
 void CALLBACK send_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags) {
+	s_wsabuf[0].len = BUFSIZE;
+	DWORD r_flag = 0;
+	ZeroMemory(&s_over, 0);
+	WSARecv(s_sock, s_wsabuf, 1, 0, &r_flag, &s_over, recv_callback);
 }
