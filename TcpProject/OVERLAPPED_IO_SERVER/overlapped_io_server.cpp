@@ -27,7 +27,8 @@ void err_display(char* msg) {
 		NULL, WSAGetLastError(),
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR)&lpMsgBuf, 0, NULL);
-	std::cout << "[" << msg << "] : " << (char*)lpMsgBuf << std::endl;
+	//std::cout << "[" << msg << "] : " << (char*)lpMsgBuf << std::endl;
+	printf("[%s] : %s", msg, (char*)lpMsgBuf);
 	LocalFree(lpMsgBuf);
 }
 
@@ -79,4 +80,13 @@ void do_recv() {
 	DWORD recv_flag = 0;
 	ZeroMemory(&c_over, sizeof(c_over));
 	WSARecv(c_sock, c_wsabuf, 1, NULL, &recv_flag, &c_over, recv_callback);
+}
+
+// WSARecv 완료 시 OS에서 자동으로 호출
+void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags) {
+	if (0 == num_bytes) return;
+	printf("Send from Client : %s", c_msg);
+	c_wsabuf[0].len = num_bytes;
+	ZeroMemory(&c_over, sizeof(c_over));
+	WSASend(c_sock, c_wsabuf, 1, 0, 0, &c_over, send_callback);
 }
