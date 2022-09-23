@@ -36,6 +36,12 @@ WSAOVERLAPPED c_over; // overlapped 구조체
 WSABUF c_wsabuf[1];
 char c_msg[BUFSIZE];
 
+// OS에서 호출할 callback 함수 선언
+void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags);
+void CALLBACK send_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags);
+
+// 송수신 시작 함수
+void do_recv();
 
 // Overlapped I/O CALLBACK 모델
 int main() {
@@ -65,4 +71,12 @@ int main() {
 	closesocket(s_sock);
 	WSACleanup();
 	
+}
+
+void do_recv() {
+	c_wsabuf[0].len = BUFSIZE;
+	c_wsabuf[0].buf = c_msg;
+	DWORD recv_flag = 0;
+	ZeroMemory(&c_over, sizeof(c_over));
+	WSARecv(c_sock, c_wsabuf, 1, NULL, &recv_flag, &c_over, recv_callback);
 }
