@@ -57,7 +57,8 @@ int main() {
 	serveraddr.sin_port = htons(SERVER_PORT);
 	InetPton(AF_INET, SERVER_ADDR, &serveraddr.sin_addr.s_addr);
 	
-
+	while (1) SleepEx(100, true);
+	closesocket(s_sock);
 	WSACleanup();
 
 }
@@ -71,6 +72,8 @@ void do_send() {
 	s_wsabuf[0].buf = s_msg;
 	ZeroMemory(&s_over, sizeof(s_over));
 	WSASend(s_sock, s_wsabuf, 1, 0, 0, &s_over, send_callback);
+	
+	do_send();
 }
 
 // WSARecv 완료 시 OS에서 자동으로 호출
