@@ -49,7 +49,7 @@ int main() {
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return -1;
 
-	SOCKET s_sock = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED); // overlapped 지원하는 소켓 생성
+	SOCKET s_sock = WSASocketW(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED); // overlapped 지원하는 소켓 생성
 	if (INVALID_SOCKET == s_sock) err_quit("WSAsocket()");
 	
 	sockaddr_in serveraddr;
@@ -69,6 +69,10 @@ int main() {
 	int addrlen = sizeof(clientaddr);
 	c_sock = WSAAccept(s_sock, (sockaddr*)&clientaddr, &addrlen, NULL, NULL);
 	
+	// 프로세스를 비동기 통지를 받을 수 있는 alertable 상태로 변경
+	do_recv();
+	while (1) SleepEx(100,true);
+
 	closesocket(s_sock);
 	WSACleanup();
 	
@@ -89,4 +93,8 @@ void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DW
 	c_wsabuf[0].len = num_bytes;
 	ZeroMemory(&c_over, sizeof(c_over));
 	WSASend(c_sock, c_wsabuf, 1, 0, 0, &c_over, send_callback);
+}
+
+void CALLBACK send_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags) {
+	do_recv();
 }
