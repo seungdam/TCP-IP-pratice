@@ -50,13 +50,16 @@ int main() {
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return -1;
 
-	
+	s_sock = WSASocketW(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
+
 	sockaddr_in serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_port = htons(SERVER_PORT);
-	InetPton(AF_INET, SERVER_ADDR, &serveraddr.sin_addr.s_addr);
+	inet_pton(AF_INET, SERVER_ADDR, &serveraddr.sin_addr);
 	
+	WSAConnect(s_sock, (sockaddr*)&serveraddr, sizeof(serveraddr), 0, 0, 0, 0);
+	do_send();
 	while (1) SleepEx(100, true);
 	closesocket(s_sock);
 	WSACleanup();
@@ -72,14 +75,12 @@ void do_send() {
 	s_wsabuf[0].buf = s_msg;
 	ZeroMemory(&s_over, sizeof(s_over));
 	WSASend(s_sock, s_wsabuf, 1, 0, 0, &s_over, send_callback);
-	
-	do_send();
 }
 
 // WSARecv 완료 시 OS에서 자동으로 호출
 void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags) {
 	if (0 == num_bytes) return;
-	printf("Send from Server: %s", s_msg);
+	printf("Send from Server: %s\n", s_msg);
 	do_send();
 }
 
