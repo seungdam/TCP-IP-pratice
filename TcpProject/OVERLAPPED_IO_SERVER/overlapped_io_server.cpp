@@ -38,16 +38,15 @@ class SESSION {
 	WSAOVERLAPPED recv_over; // overlapped 구조체
 	WSABUF recv_wsabuf;
 	WSABUF send_wsabuf;
-	char recv_msg[BUFSIZE];
-	char send_msg[BUFSIZE];
 	int id; // 맵에 저장한 session들을 탐색하기 위함
 public:
+	char recv_msg[BUFSIZE];
 	SESSION() { printf("error"); exit(1); };
 	SESSION(int id,SOCKET s):id(id),sock(s) {
 		recv_wsabuf.len = BUFSIZE;
 		recv_wsabuf.buf = recv_msg;
 		send_wsabuf.len = 0;
-		send_wsabuf.buf = send_msg;
+		send_wsabuf.buf = recv_msg;
 	}
 	void do_send(int num_bytes) {
 		ZeroMemory(&recv_over, sizeof(recv_over));
@@ -117,13 +116,12 @@ int main() {
 
 // WSARecv 완료 시 OS에서 자동으로 호출
 void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags) {
-	if (0 == num_bytes) return;
-	printf("Send from Client : %s", c_msg);
-	c_wsabuf[0].len = num_bytes;
-	ZeroMemory(&c_over, sizeof(c_over));
-	WSASend(c_sock, c_wsabuf, 1, 0, 0, &c_over, send_callback);
+	int s_id = (int)over->hEvent;
+	printf("[%d Client] : %s \n",s_id,clients[s_id].recv_msg);
+	clients[s_id].do_send(num_bytes);
 }
 
 void CALLBACK send_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags) {
-	do_recv();
+	int s_id = (int)over->hEvent;
+	clients[s_id].do_recv();
 }
