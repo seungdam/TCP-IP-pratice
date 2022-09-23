@@ -55,6 +55,14 @@ int main() {
 	retval = bind(s_sock, (sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (SOCKET_ERROR == retval) err_quit("bind()");
 
+	retval = listen(s_sock, SOMAXCONN);
+	if (SOCKET_ERROR == retval) err_quit("listen()");
 
+	sockaddr_in clientaddr;
+	int addrlen = sizeof(clientaddr);
+	c_sock = WSAAccept(s_sock, (sockaddr*)&clientaddr, &addrlen, NULL, NULL);
+	
+	closesocket(s_sock);
 	WSACleanup();
+	
 }
