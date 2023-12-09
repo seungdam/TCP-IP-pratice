@@ -33,6 +33,10 @@ void err_display(char* msg) {
 	LocalFree(lpMsgBuf);
 }
 
+// OS에서 호출할 callback 함수 선언
+void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags);
+void CALLBACK send_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags);
+
 class SESSION {
 	SOCKET sock; // 클라이언트 소켓
 	WSAOVERLAPPED recv_over; // overlapped 구조체
@@ -60,14 +64,12 @@ public:
 		DWORD recv_flag = 0;
 		WSARecv(sock, &recv_wsabuf, 1, 0, &recv_flag, &recv_over, recv_callback);
 	}
-	~SESSION();
+	~SESSION() { closesocket(sock); };
 };
 
-std::unordered_map<SOCKET, SESSION> clients;
+std::unordered_map<int, SESSION> clients;
 
-// OS에서 호출할 callback 함수 선언
-void CALLBACK recv_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags);
-void CALLBACK send_callback(DWORD err, DWORD num_bytes, LPWSAOVERLAPPED over, DWORD flags);
+
 
 // 송수신 시작 함수
 void do_recv();
@@ -95,12 +97,18 @@ int main() {
 
 	sockaddr_in clientaddr;
 	int addrlen = sizeof(clientaddr);
-	c_sock = WSAAccept(s_sock, (sockaddr*)&clientaddr, &addrlen, NULL, NULL);
-	
-	// 프로세스를 비동기 통지를 받을 수 있는 alertable 상태로 변경
-	do_recv();
-	while (1) SleepEx(100,true);
-
+	//c_sock = WSAAccept(s_sock, (sockaddr*)&clientaddr, &addrlen, NULL, NULL);
+	//
+	//// 프로세스를 비동기 통지를 받을 수 있는 alertable 상태로 변경
+	//do_recv();
+	//while (1) SleepEx(100,true);
+	for (int i = 1; ; ++i) {
+		SOCKET c_socket = WSAAccept(s_sock, (sockaddr*)(&clientaddr),&addrlen, 0, 0);
+		clients.try_emplace(i, i, c_socket);
+		printf("[%d] 클라이언트 연결\n", i);
+		clients[i].do_recv();
+	}
+	clients.clear();
 	closesocket(s_sock);
 	WSACleanup();
 	
